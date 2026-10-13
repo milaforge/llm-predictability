@@ -1,6 +1,6 @@
-# Goal
+# Predictability
 
-Turn an unpredictable LLM into an API with a predictable contract.
+Predictable API contracts around nondeterministic models.
 
 ```mermaid
 
@@ -26,9 +26,24 @@ flowchart TB
 
 ```
 
-## Utility: Classifier
+## Stack
 
-I'll build a support-ticket classifier.
+- Python / FastAPI
+- Pydantic
+- Ollama
+- uv / pytest
+
+## Run
+
+```bash
+uv sync
+ollama pull qwen3:4b
+uv run uvicorn main:app --reload
+```
+
+Requires a running Ollama server.
+
+## API
 
 Input:
 
@@ -36,7 +51,7 @@ Input:
 { "text": "The login button does not work" }
 ```
 
-Expected output:
+Output:
 
 ```json
 { "category": "bug" }
@@ -55,3 +70,28 @@ Expected output:
 ```json
 { "category": "feature" }
 ```
+
+Allowed categories: bug, feature, question, other.
+
+## Contracts
+
+- Input: nonempty text, maximum 2000 characters
+- Output: strictly validated JSON schema
+- Invalid input: HTTP 422
+- Invalid model output: HTTP 502
+
+## Tests
+
+```bash
+uv run pytest -v
+```
+
+Tests mock Ollama to verify API behavior independently
+of model availability.
+
+## Limitations
+
+- Schema validity does not guarantee semantic correctness.
+- Temperature 0 does not guarantee determinism.
+- Whitespace-only input is currently accepted.
+- Ollama transport errors and timeouts are not yet handled.
