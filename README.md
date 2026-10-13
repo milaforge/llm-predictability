@@ -25,3 +25,33 @@ flowchart TB
     linkStyle default stroke:#666,stroke-width:1px
 
 ```
+
+## Utility: Classifier
+
+I'll build a support-ticket classifier.
+
+Input:
+
+```json
+{ "text": "The login button does not work" }
+```
+
+Expected output:
+
+```json
+{ "category": "bug" }
+```
+
+Send a request:
+
+```sh
+curl -s localhost:8000/classify \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Please add dark mode"}'
+```
+
+Expected output:
+
+```json
+{ "category": "feature" }
+```
